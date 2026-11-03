@@ -17,8 +17,11 @@ jobs:
         run: |
           sudo dpkg --add-architecture armhf
 
-          # armhf packages must come from the Ubuntu Ports mirror, not the standard
-          # security.ubuntu.com amd64 archive.
+          # Keep the runner's regular Ubuntu sources amd64-only.
+          sudo sed -i '/^Types: deb$/a Architectures: amd64' \
+            /etc/apt/sources.list.d/ubuntu.sources
+
+          # Use Ubuntu Ports for ARMHF packages.
           sudo tee /etc/apt/sources.list.d/armhf-ports.sources >/dev/null <<'EOF'
           Types: deb
           URIs: http://ports.ubuntu.com/ubuntu-ports
