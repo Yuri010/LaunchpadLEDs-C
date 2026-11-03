@@ -10,18 +10,16 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - name: Check out source
+      - name: Checkout source
         uses: actions/checkout@v4
 
       - name: Install compilers and MIDI development libraries
         run: |
           sudo dpkg --add-architecture armhf
 
-          # Keep the runner's regular Ubuntu sources amd64-only.
           sudo sed -i '/^Types: deb$/a Architectures: amd64' \
             /etc/apt/sources.list.d/ubuntu.sources
 
-          # Use Ubuntu Ports for ARMHF packages.
           sudo tee /etc/apt/sources.list.d/armhf-ports.sources >/dev/null <<'EOF'
           Types: deb
           URIs: http://ports.ubuntu.com/ubuntu-ports
@@ -45,7 +43,7 @@ jobs:
           x86_64-w64-mingw32-gcc \
             -std=c11 -O2 -Wall -Wextra -Wpedantic \
             sysex_shell.c midi_windows.c \
-            -o dist/sysex-shell-windows-x64.exe \
+            -o dist/sysex_shell-windows-x64.exe \
             -lwinmm -static-libgcc
 
       - name: Build Linux x64 binary
@@ -53,7 +51,7 @@ jobs:
           gcc \
             -std=c11 -O2 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Wpedantic \
             sysex_shell.c midi_linux.c \
-            -o dist/sysex-shell-linux-x64 \
+            -o dist/sysex_shell-linux-x64 \
             $(pkg-config --cflags --libs alsa) -pthread
 
       - name: Build Linux ARMv7 binary
@@ -63,7 +61,7 @@ jobs:
             -std=c11 -O2 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Wpedantic \
             -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard \
             sysex_shell.c midi_linux.c \
-            -o dist/sysex-shell-linux-armv7hf \
+            -o dist/sysex_shell-linux-armv7 \
             $(pkg-config --cflags --libs alsa) -pthread
 
       - name: Upload compiled binaries
