@@ -16,8 +16,20 @@ jobs:
       - name: Install compilers and MIDI development libraries
         run: |
           sudo dpkg --add-architecture armhf
+
+          # armhf packages must come from the Ubuntu Ports mirror, not the standard
+          # security.ubuntu.com amd64 archive.
+          sudo tee /etc/apt/sources.list.d/armhf-ports.sources >/dev/null <<'EOF'
+          Types: deb
+          URIs: http://ports.ubuntu.com/ubuntu-ports
+          Suites: noble noble-updates noble-backports noble-security
+          Components: main universe restricted multiverse
+          Architectures: armhf
+          Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+          EOF
+
           sudo apt-get update
-          sudo apt-get install --yes \
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
             build-essential \
             gcc-mingw-w64-x86-64 \
             gcc-arm-linux-gnueabihf \
@@ -41,7 +53,7 @@ jobs:
             -o dist/sysex-shell-linux-x64 \
             $(pkg-config --cflags --libs alsa) -pthread
 
-      - name: Build Linux ARMv7 hard-float binary for Allwinner H2+
+      - name: Build Linux ARMv7 binary
         run: |
           export PKG_CONFIG_LIBDIR=/usr/lib/arm-linux-gnueabihf/pkgconfig:/usr/share/pkgconfig
           arm-linux-gnueabihf-gcc \
