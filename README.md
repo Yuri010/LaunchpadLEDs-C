@@ -3,7 +3,7 @@
 A C-based project for controlling a Novation Launchpad through MIDI SysEx messages.  
 It's a CLI-based shell for lighting and text effects, monitoring input, and sending raw SysEx commands.
 
----
+<img src="https://github.com/user-attachments/assets/23cb3209-a391-47eb-8edc-27e8066a91f8" width="50%">
 
 ## Features
 
@@ -17,8 +17,6 @@ It's a CLI-based shell for lighting and text effects, monitoring input, and send
 
 And the nice thing is- It *should* work with both Windows and Linux systems :P
 
----
-
 ## Requirements
 
 - A compiler like GCC or Clang
@@ -28,8 +26,6 @@ And the nice thing is- It *should* work with both Windows and Linux systems :P
   - ```sh
     sudo apt-get install build-essential libasound2-dev
     ```
-
----
 
 ## Building
 
@@ -55,8 +51,6 @@ But both of the provided scripts are basically just a fancy version of this comm
 gcc -std=c11 -Wall -Wextra -Wpedantic sysex_shell.c midi_linux.c -o sysex_shell $(pkg-config --cflags --libs alsa) -pthread
 ```
 
----
-
 ## Usage
 
 Run the shell from the project root:
@@ -72,8 +66,6 @@ or
 ```
 
 Type `help` in the shell to view the supported commands.
-
----
 
 ## Commands
 
@@ -123,24 +115,20 @@ Common commands include:
 
 See the Novation Launchpad MK2 Programmer's Reference Manual for more information.
 
----
-
 ## Notes
 
 This project is basically my earlier [LaunchpadLEDs-Python](https://github.com/Yuri010/LaunchpadLEDs-Python) but ported to C.  
 As expected, this C version is a lot more- unreadable.. But hey it works...
 
----
+## Screenshots
+<img src="https://github.com/user-attachments/assets/23cb3209-a391-47eb-8edc-27e8066a91f8" width="45%">
+<img src="https://github.com/user-attachments/assets/b4f537e0-218a-4b10-93c6-7ef2da24d937" width="45%">
 
 ## License
 
 This project is provided as-is for hobby and educational use.
 
----
-
 ## Credits
 
 - [Novation Launchpad MK2 Programmer's Reference Manual](https://fael-downloads-prod.focusrite.com/customer/prod/s3fs-public/downloads/Launchpad%20MK2%20Programmers%20Reference%20Manual%20v1.03.pdf)
 - Inspired by the Ableton workflow and Launchpad community.
-
----
