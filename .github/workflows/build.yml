@@ -1,0 +1,59 @@
+name: Build binaries
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install compilers and MIDI development libraries
+        run: |
+          sudo dpkg --add-architecture armhf
+          sudo apt-get update
+          sudo apt-get install --yes \
+            build-essential \
+            gcc-mingw-w64-x86-64 \
+            gcc-arm-linux-gnueabihf \
+            libasound2-dev \
+            libasound2-dev:armhf
+
+      - name: Build Windows x64 binary
+        run: |
+          mkdir -p dist
+          x86_64-w64-mingw32-gcc \
+            -std=c11 -O2 -Wall -Wextra -Wpedantic \
+            sysex_shell.c midi_windows.c \
+            -o dist/sysex-shell-windows-x64.exe \
+            -lwinmm -static-libgcc
+
+      - name: Build Linux x64 binary
+        run: |
+          gcc \
+            -std=c11 -O2 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Wpedantic \
+            sysex_shell.c midi_linux.c \
+            -o dist/sysex-shell-linux-x64 \
+            $(pkg-config --cflags --libs alsa) -pthread
+
+      - name: Build Linux ARMv7 hard-float binary for Allwinner H2+
+        run: |
+          export PKG_CONFIG_LIBDIR=/usr/lib/arm-linux-gnueabihf/pkgconfig:/usr/share/pkgconfig
+          arm-linux-gnueabihf-gcc \
+            -std=c11 -O2 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Wpedantic \
+            -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard \
+            sysex_shell.c midi_linux.c \
+            -o dist/sysex-shell-linux-armv7hf \
+            $(pkg-config --cflags --libs alsa) -pthread
+
+      - name: Upload compiled binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: launchpadleds-binaries
+          path: dist/
+          if-no-files-found: error
